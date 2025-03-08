@@ -86,7 +86,23 @@
         .add-button:hover {
             opacity: 0.8;
         }
-
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            opacity: 0.8;
+        }
+        /* Стили для модального окна */
         .modal {
             display: none;
             position: fixed;
@@ -151,7 +167,7 @@
                     </div>
                     <div class="book-actions">
                         <a href="{% url 'edit_book' book.book_id %}" class="edit">Изменить</a>
-                        <button type="button" class="delete" onclick="openModal('{% url 'delete_book' book.book_id %}', {{ book.book_id }})">Удалить</button>
+                        <button type="button" class="delete" onclick="openModal('{% url 'delete_book' book.book_id %}', '{{ book.book_name }}')">Удалить</button>
                     </div>
                 </li>
             {% empty %}
@@ -159,14 +175,30 @@
             {% endfor %}
         </ul>
 
-        <a href="#" class="add-button">Добавить новую книгу</a>
+        <a href="{% url 'add_book' %}" class="add-button">Добавить новую книгу</a>
+
+        <!-- Навигация по страницам -->
+        {% if books.has_other_pages %}
+            <div class="pagination">
+                {% if books.has_previous %}
+                    <a href="?page={{ books.previous_page_number }}">« Предыдущая</a>
+                {% endif %}
+                {% for num in books.paginator.page_range %}
+                    <a href="?page={{ num }}" {% if books.number == num %}style="background-color: #2ecc71;"{% endif %}>{{ num }}</a>
+                {% endfor %}
+                {% if books.has_next %}
+                    <a href="?page={{ books.next_page_number }}">Следующая »</a>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 
+    <!-- Модальное окно -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <h2>Подтверждение удаления</h2>
             <p>Вы уверены, что хотите удалить книгу "<span id="modalBookName"></span>"?</p>
-            <form id="deleteForm" method="post" style="display: inline;">
+            <form id="deleteForm" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="deleteUrl" name="delete_url">
                 <div class="modal-buttons">
@@ -178,21 +210,26 @@
     </div>
 
     <script>
-        function openModal(url, bookId) {
+        // Функция открытия модального окна
+        function openModal(url, bookName) {
             const modal = document.getElementById('deleteModal');
-            const bookName = document.getElementById('modalBookName');
+            const bookNameSpan = document.getElementById('modalBookName');
+            const deleteForm = document.getElementById('deleteForm');
             const deleteUrl = document.getElementById('deleteUrl');
-            const book = document.querySelector(`li.book-item:nth-child(${bookId}) .book-details h3`).textContent;
-            bookName.textContent = book;
+
+            bookNameSpan.textContent = bookName;
             deleteUrl.value = url;
+            deleteForm.action = url;  // Устанавливаем URL для формы
             modal.style.display = 'flex';
         }
 
+        // Функция закрытия модального окна
         function closeModal() {
             const modal = document.getElementById('deleteModal');
             modal.style.display = 'none';
         }
 
+        // Закрытие модального окна при клике вне его
         window.onclick = function(event) {
             const modal = document.getElementById('deleteModal');
             if (event.target == modal) {
