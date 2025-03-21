@@ -1,4 +1,32 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='Пользователь')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Общая стоимость')
+
+    def __str__(self):
+        return f"Заказ #{self.id} от {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name='Заказ')
+    book_name = models.CharField(max_length=255, verbose_name='Название книги')
+    quantity = models.PositiveIntegerField(verbose_name='Количество')
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена за единицу')
+
+    def __str__(self):
+        return f"{self.book_name} (x{self.quantity})"
+
+    class Meta:
+        verbose_name = 'Элемент заказа'
+        verbose_name_plural = 'Элементы заказа'
 
 
 class AuthGroup(models.Model):
@@ -124,4 +152,3 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-

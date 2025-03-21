@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .submit-button:hover {
+            opacity: 0.8;
+        }
+        .password-button {
+            background-color: #2ecc71;
+        }
+        .password-button:hover {
+            opacity: 0.8;
+        }
+        .orders-section {
+            margin-top: 30px;
+        }
+        .order-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .order-item h3 {
+            color: #34495e;
+            margin: 0 0 10px;
+        }
+        .order-item p {
+            margin: 5px 0;
+            color: #7f8c8d;
+        }
+        .order-items {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .order-items li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .total-cost {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .total-cost h4 {
+            color: #e74c3c;
+            margin: 0;
+        }
+        .show-all-btn {
+            display: block;
+            text-align: center;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        .show-all-btn:hover {
+            opacity: 0.8;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .errorlist, .error-message {
+            color: #e74c3c;
+            margin-bottom: 10px;
+            list-style: none;
+            padding: 0;
+        }
+        .success-message {
+            color: #2ecc71;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Личный кабинет</h1>
+
+        <!-- Сообщения об успехе или ошибке -->
+        {% if messages %}
+            {% for message in messages %}
+                <p class="{% if message.tags == 'success' %}success-message{% else %}error-message{% endif %}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Форма редактирования профиля -->
+        <h2>Редактировать данные</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="update_profile" value="1">
+            {{ profile_form.non_field_errors }}
+            <div class="form-group">
+                {{ profile_form.username.errors }}
+                <label for="{{ profile_form.username.id_for_label }}">{{ profile_form.username.label }}</label>
+                {{ profile_form.username }}
+            </div>
+            <div class="form-group">
+                {{ profile_form.email.errors }}
+                <label for="{{ profile_form.email.id_for_label }}">{{ profile_form.email.label }}</label>
+                {{ profile_form.email }}
+            </div>
+            <div class="form-group">
+                {{ profile_form.first_name.errors }}
+                <label for="{{ profile_form.first_name.id_for_label }}">{{ profile_form.first_name.label }}</label>
+                {{ profile_form.first_name }}
+            </div>
+            <div class="form-group">
+                {{ profile_form.last_name.errors }}
+                <label for="{{ profile_form.last_name.id_for_label }}">{{ profile_form.last_name.label }}</label>
+                {{ profile_form.last_name }}
+            </div>
+            <button type="submit" class="submit-button">Сохранить изменения</button>
+        </form>
+
+        <!-- Форма смены пароля -->
+        <h2>Сменить пароль</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            {{ password_form.non_field_errors }}
+            <div class="form-group">
+                {{ password_form.old_password.errors }}
+                <label for="{{ password_form.old_password.id_for_label }}">{{ password_form.old_password.label }}</label>
+                {{ password_form.old_password }}
+            </div>
+            <div class="form-group">
+                {{ password_form.new_password1.errors }}
+                <label for="{{ password_form.new_password1.id_for_label }}">{{ password_form.new_password1.label }}</label>
+                {{ password_form.new_password1 }}
+            </div>
+            <div class="form-group">
+                {{ password_form.new_password2.errors }}
+                <label for="{{ password_form.new_password2.id_for_label }}">{{ password_form.new_password2.label }}</label>
+                {{ password_form.new_password2 }}
+            </div>
+            <button type="submit" class="submit-button password-button">Сменить пароль</button>
+        </form>
+
+        <!-- Раздел "Мои заказы" -->
+        <div class="orders-section">
+            <h2>Мои заказы</h2>
+            {% if last_order %}
+                <div class="order-item">
+                    <h3>Заказ #{{ last_order.id }} от {{ last_order.created_at|date:"Y-m-d H:i" }}</h3>
+                    <p><strong>Состав:</strong></p>
+                    <ul class="order-items">
+                        {% for item in last_order.items.all %}
+                            <li>{{ item.book_name }} (x{{ item.quantity }}) - {{ item.price }} ₽</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="total-cost">
+                        <h4>Итого: {{ last_order.total_cost }} ₽</h4>
+                    </div>
+                </div>
+                <a href="{% url 'orders' %}" class="show-all-btn">Показать все</a>
+            {% else %}
+                <p>У вас пока нет заказов.</p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'book_list' %}" class="back-link">Вернуться в магазин</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .cart-list {
+            list-style: none;
+            padding: 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-details {
+            flex-grow: 1;
+        }
+        .cart-details h3 {
+            margin: 0;
+            color: #34495e;
+        }
+        .cart-details p {
+            margin: 5px 0;
+            color: #7f8c8d;
+        }
+        .cart-price {
+            font-size: 1.2em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .cart-actions {
+            margin-left: 20px;
+        }
+        .remove-button {
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-button:hover {
+            opacity: 0.8;
+        }
+        .total-cost {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .total-cost h2 {
+            color: #e74c3c;
+            margin: 0;
+        }
+        .order-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .order-button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .order-button:hover {
+            opacity: 0.8;
+        }
+        .login-prompt {
+            text-align: center;
+            margin-top: 20px;
+            color: #e74c3c;
+        }
+        .login-prompt a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .login-prompt a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ваша корзина</h1>
+        <ul class="cart-list">
+            {% for item in cart_items %}
+                <li class="cart-item">
+                    <div class="cart-details">
+                        <h3>{{ item.name }}</h3>
+                        <p>Количество: {{ item.quantity }}</p>
+                        <p>Цена за единицу: {{ item.price }} ₽</p>
+                        <p class="cart-price">Общая стоимость: {{ item.total_price }} ₽</p>
+                    </div>
+                    <div class="cart-actions">
+                        <form method="post" action="{% url 'remove_from_cart' item.book_id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-button">Удалить</button>
+                        </form>
+                    </div>
+                </li>
+            {% empty %}
+                <li>Ваша корзина пуста.</li>
+            {% endfor %}
+        </ul>
+        {% if cart_items %}
+            <div class="total-cost">
+                <h2>Итого: {{ total_cost }} ₽</h2>
+            </div>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'create_order' %}" class="order-form">
+                    {% csrf_token %}
+                    <button type="submit" class="order-button">Оформить заказ</button>
+                </form>
+            {% else %}
+                <p class="login-prompt">Пожалуйста, <a href="{% url 'login' %}">войдите</a>, чтобы оформить заказ.</p>
+            {% endif %}
+        {% endif %}
+        <a href="{% url 'book_list' %}" class="back-link">Вернуться в магазин</a>
+    </div>
+</body>
+</html>

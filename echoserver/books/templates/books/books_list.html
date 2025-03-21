@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Книжный Магазин</title>
+    <title>Список книг</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,7 +12,7 @@
             color: #333;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
@@ -24,6 +24,72 @@
             color: #2c3e50;
             margin-bottom: 20px;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .user-actions {
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column; /* Располагаем элементы вертикально */
+            align-items: flex-end; /* Выравниваем по правому краю */
+            gap: 5px; /* Уменьшаем зазор между блоками */
+        }
+        .profile-btn, .cart-btn, .logout-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            box-sizing: border-box; /* Учитываем padding в ширине */
+        }
+        .profile-btn {
+            background-color: #3498db;
+            color: #fff;
+            font-weight: bold; /* Делаем текст жирным */
+            width: calc(2 * 100px + 10px); /* 2 кнопки по 100px + 10px зазор между ними */
+        }
+        .profile-btn:hover {
+            opacity: 0.8;
+        }
+        .cart-logout-container {
+            display: flex;
+            gap: 10px; /* Зазор между "Корзина" и "Выйти" */
+        }
+        .cart-btn, .logout-btn {
+            width: 100px; /* Фиксированная ширина для "Корзина" и "Выйти" */
+        }
+        .cart-btn {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+        .cart-btn:hover {
+            opacity: 0.8;
+        }
+        .logout-btn {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+        .auth-section {
+            text-align: right;
+        }
+        .login-btn {
+            background-color: #3498db;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .login-btn:hover {
+            opacity: 0.8;
+        }
         .book-list {
             list-style: none;
             padding: 0;
@@ -32,13 +98,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
             border-bottom: 1px solid #ddd;
+        }
+        .book-item:last-child {
+            border-bottom: none;
         }
         .book-details {
             flex-grow: 1;
         }
-        .book-details h3 {
+        .book-details h2 {
             margin: 0;
             color: #34495e;
         }
@@ -51,191 +120,120 @@
             color: #e74c3c;
             font-weight: bold;
         }
-        .book-actions a {
-            margin-left: 10px;
+        .book-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .add-to-cart-btn, .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
             text-decoration: none;
-            padding: 5px 10px;
+        }
+        .add-to-cart-btn {
+            background-color: #f1c40f;
             color: #fff;
-            border-radius: 4px;
         }
-        .book-actions .edit {
-            background-color: #3498db;
-        }
-        .book-actions .delete {
-            background-color: #e74c3c;
-            border: none;
-            padding: 5px 10px;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .book-actions .edit:hover, .book-actions .delete:hover {
+        .add-to-cart-btn:hover {
             opacity: 0.8;
         }
-        .add-button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            text-align: center;
-            padding: 10px;
-            background-color: #2ecc71;
+        .edit-btn {
+            background-color: #3498db;
             color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
         }
-        .add-button:hover {
+        .edit-btn:hover {
+            opacity: 0.8;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .delete-btn:hover {
             opacity: 0.8;
         }
         .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+            text-align: center;
             margin-top: 20px;
         }
-        .pagination a {
-            padding: 8px 12px;
-            background-color: #3498db;
-            color: #fff;
+        .step-links {
+            display: inline-block;
+        }
+        .step-links a {
+            color: #3498db;
             text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
             border-radius: 4px;
+            margin: 0 2px;
         }
-        .pagination a:hover {
-            opacity: 0.8;
+        .step-links a:hover {
+            background-color: #f4f4f4;
         }
-        /* Стили для модального окна */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            text-align: center;
-        }
-        .modal-content h2 {
-            color: #2c3e50;
-            margin-top: 0;
-        }
-        .modal-content p {
+        .current {
+            padding: 5px 10px;
             color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .modal-buttons .confirm {
-            background-color: #e74c3c;
-            color: #fff;
-        }
-        .modal-buttons .cancel {
-            background-color: #3498db;
-            color: #fff;
-        }
-        .modal-buttons button:hover {
-            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Добро пожаловать в Книжный Магазин</h1>
+        <div class="header">
+            <h1>Список книг</h1>
+            {% if user.is_authenticated %}
+                <div class="user-info">
+                    <div class="user-actions">
+                        <a href="{% url 'profile' %}" class="profile-btn">Учётная запись: {{ user.username }}</a>
+                        <div class="cart-logout-container">
+                            <a href="{% url 'cart' %}" class="cart-btn">Корзина</a>
+                            <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="auth-section">
+                    <a href="{% url 'login' %}" class="login-btn">Вход</a>
+                </div>
+            {% endif %}
+        </div>
+        {% if user.is_authenticated %}
+            <div style="text-align: center; margin-bottom: 20px;">
+                <a href="{% url 'add_book' %}" style="background-color: #2ecc71; color: #fff; padding: 10px 20px; border-radius: 4px; text-decoration: none;">Добавить книгу</a>
+            </div>
+        {% endif %}
         <ul class="book-list">
             {% for book in books %}
                 <li class="book-item">
                     <div class="book-details">
-                        <h3>{{ book.book_name }}</h3>
-                        <p><strong>Автор:</strong> {{ book.author_book }}</p>
+                        <h2>{{ book.book_name }}</h2>
+                        <p>Автор: {{ book.author_book }}</p>
                         <p class="book-price">{{ book.book_price }} ₽</p>
                     </div>
                     <div class="book-actions">
-                        <a href="{% url 'edit_book' book.book_id %}" class="edit">Изменить</a>
-                        <button type="button" class="delete" onclick="openModal('{% url 'delete_book' book.book_id %}', '{{ book.book_name }}')">Удалить</button>
+                        <a href="{% url 'add_to_cart' book.book_id %}" class="add-to-cart-btn">Добавить в корзину</a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'edit_book' book.book_id %}" class="edit-btn">Редактировать</a>
+                            <a href="{% url 'delete_book' book.book_id %}" class="delete-btn">Удалить</a>
+                        {% endif %}
                     </div>
                 </li>
             {% empty %}
-                <li>К сожалению, книг в магазине пока нет.</li>
+                <li>Книг пока нет.</li>
             {% endfor %}
         </ul>
-
-        <a href="{% url 'add_book' %}" class="add-button">Добавить новую книгу</a>
-
-        <!-- Навигация по страницам -->
-        {% if books.has_other_pages %}
-            <div class="pagination">
+        <div class="pagination">
+            <span class="step-links">
                 {% if books.has_previous %}
-                    <a href="?page={{ books.previous_page_number }}">« Предыдущая</a>
+                    <a href="?page=1">« первая</a>
+                    <a href="?page={{ books.previous_page_number }}">предыдущая</a>
                 {% endif %}
-                {% for num in books.paginator.page_range %}
-                    <a href="?page={{ num }}" {% if books.number == num %}style="background-color: #2ecc71;"{% endif %}>{{ num }}</a>
-                {% endfor %}
+                <span class="current">
+                    Страница {{ books.number }} из {{ books.paginator.num_pages }}.
+                </span>
                 {% if books.has_next %}
-                    <a href="?page={{ books.next_page_number }}">Следующая »</a>
+                    <a href="?page={{ books.next_page_number }}">следующая</a>
+                    <a href="?page={{ books.paginator.num_pages }}">последняя »</a>
                 {% endif %}
-            </div>
-        {% endif %}
-    </div>
-
-    <!-- Модальное окно -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <h2>Подтверждение удаления</h2>
-            <p>Вы уверены, что хотите удалить книгу "<span id="modalBookName"></span>"?</p>
-            <form id="deleteForm" method="post">
-                {% csrf_token %}
-                <input type="hidden" id="deleteUrl" name="delete_url">
-                <div class="modal-buttons">
-                    <button type="submit" class="confirm">Да</button>
-                    <button type="button" class="cancel" onclick="closeModal()">Нет</button>
-                </div>
-            </form>
+            </span>
         </div>
     </div>
-
-    <script>
-        // Функция открытия модального окна
-        function openModal(url, bookName) {
-            const modal = document.getElementById('deleteModal');
-            const bookNameSpan = document.getElementById('modalBookName');
-            const deleteForm = document.getElementById('deleteForm');
-            const deleteUrl = document.getElementById('deleteUrl');
-
-            bookNameSpan.textContent = bookName;
-            deleteUrl.value = url;
-            deleteForm.action = url;  // Устанавливаем URL для формы
-            modal.style.display = 'flex';
-        }
-
-        // Функция закрытия модального окна
-        function closeModal() {
-            const modal = document.getElementById('deleteModal');
-            modal.style.display = 'none';
-        }
-
-        // Закрытие модального окна при клике вне его
-        window.onclick = function(event) {
-            const modal = document.getElementById('deleteModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>

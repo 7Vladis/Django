@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои заказы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+        .order-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .order-item h2 {
+            color: #34495e;
+            margin: 0 0 10px;
+        }
+        .order-item p {
+            margin: 5px 0;
+            color: #7f8c8d;
+        }
+        .order-items {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .order-items li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .total-cost {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .total-cost h3 {
+            color: #e74c3c;
+            margin: 0;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Мои заказы</h1>
+        <ul class="order-list">
+            {% for order in orders %}
+                <li class="order-item">
+                    <h2>Заказ #{{ order.id }} от {{ order.created_at|date:"Y-m-d H:i" }}</h2>
+                    <p><strong>Состав:</strong></p>
+                    <ul class="order-items">
+                        {% for item in order.items.all %}
+                            <li>{{ item.book_name }} (x{{ item.quantity }}) - {{ item.price }} ₽</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="total-cost">
+                        <h3>Итого: {{ order.total_cost }} ₽</h3>
+                    </div>
+                </li>
+            {% empty %}
+                <li>У вас пока нет заказов.</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'book_list' %}" class="back-link">Вернуться в магазин</a>
+    </div>
+</body>
+</html>
