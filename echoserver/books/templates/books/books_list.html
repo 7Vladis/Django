@@ -36,36 +36,38 @@
         .user-actions {
             margin-top: 5px;
             display: flex;
-            flex-direction: column; /* Располагаем элементы вертикально */
-            align-items: flex-end; /* Выравниваем по правому краю */
-            gap: 5px; /* Уменьшаем зазор между блоками */
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
         }
-        .profile-btn, .cart-btn, .logout-btn {
+        .auth-logout-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .cart-logout-container {
+            display: flex;
+            gap: 10px;
+        }
+        .profile-btn, .cart-btn, .logout-btn, .login-btn {
             padding: 5px 10px;
             border-radius: 4px;
             text-decoration: none;
             text-align: center;
-            box-sizing: border-box; /* Учитываем padding в ширине */
+            box-sizing: border-box;
         }
         .profile-btn {
             background-color: #3498db;
             color: #fff;
-            font-weight: bold; /* Делаем текст жирным */
-            width: calc(2 * 100px + 10px); /* 2 кнопки по 100px + 10px зазор между ними */
+            font-weight: bold;
+            width: 150px;
         }
         .profile-btn:hover {
             opacity: 0.8;
         }
-        .cart-logout-container {
-            display: flex;
-            gap: 10px; /* Зазор между "Корзина" и "Выйти" */
-        }
-        .cart-btn, .logout-btn {
-            width: 100px; /* Фиксированная ширина для "Корзина" и "Выйти" */
-        }
         .cart-btn {
             background-color: #2ecc71;
             color: #fff;
+            width: 150px;
         }
         .cart-btn:hover {
             opacity: 0.8;
@@ -73,12 +75,10 @@
         .logout-btn {
             background-color: #e74c3c;
             color: #fff;
+            width: 150px;
         }
         .logout-btn:hover {
             opacity: 0.8;
-        }
-        .auth-section {
-            text-align: right;
         }
         .login-btn {
             background-color: #3498db;
@@ -86,6 +86,7 @@
             padding: 5px 10px;
             border-radius: 4px;
             text-decoration: none;
+            width: 150px;
         }
         .login-btn:hover {
             opacity: 0.8;
@@ -178,21 +179,23 @@
     <div class="container">
         <div class="header">
             <h1>Список книг</h1>
-            {% if user.is_authenticated %}
-                <div class="user-info">
-                    <div class="user-actions">
-                        <a href="{% url 'profile' %}" class="profile-btn">Учётная запись: {{ user.username }}</a>
-                        <div class="cart-logout-container">
-                            <a href="{% url 'cart' %}" class="cart-btn">Корзина</a>
+            <div class="user-info">
+                <div class="user-actions">
+                    <div class="auth-logout-container">
+                        {% if user.is_authenticated %}
                             <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
-                        </div>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="login-btn">Вход</a>
+                        {% endif %}
+                    </div>
+                    <div class="cart-logout-container">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'profile' %}" class="profile-btn">Учётная запись: {{ user.username }}</a>
+                        {% endif %}
+                        <a href="{% url 'cart' %}" class="cart-btn">Корзина</a>
                     </div>
                 </div>
-            {% else %}
-                <div class="auth-section">
-                    <a href="{% url 'login' %}" class="login-btn">Вход</a>
-                </div>
-            {% endif %}
+            </div>
         </div>
         {% if user.is_authenticated %}
             <div style="text-align: center; margin-bottom: 20px;">

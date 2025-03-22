@@ -102,6 +102,7 @@ def remove_from_cart(request, book_id):
     return redirect('cart')
 
 
+@login_required(login_url='login')
 def create_order(request):
     if request.method != 'POST':
         return redirect('cart')
