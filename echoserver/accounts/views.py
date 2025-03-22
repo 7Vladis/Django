@@ -67,5 +67,5 @@ def profile_view(request):
     return render(request, 'accounts/profile.html', {
         'profile_form': profile_form,
         'password_form': password_form,
-        'last_order': last_order,  # Передаём последний заказ в шаблон
+        'last_order': last_order,
     })
