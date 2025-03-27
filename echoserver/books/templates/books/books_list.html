@@ -214,7 +214,10 @@
                         <a href="{% url 'add_to_cart' book.book_id %}" class="add-to-cart-btn">Добавить в корзину</a>
                         {% if user.is_superuser %}
                             <a href="{% url 'edit_book' book.book_id %}" class="edit-btn">Редактировать</a>
-                            <a href="{% url 'delete_book' book.book_id %}" class="delete-btn">Удалить</a>
+                            <form action="{% url 'delete_book' book.book_id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-btn">Удалить</button>
+                            </form>
                         {% endif %}
                     </div>
                 </li>
@@ -229,7 +232,7 @@
                     <a href="?page={{ books.previous_page_number }}">предыдущая</a>
                 {% endif %}
                 <span class="current">
-                    Страница {{ books.number }} из {{ books.paginator.num_pages }}.
+                    Страница {{ books.number }} из {{ books.paginator.num_pages }}
                 </span>
                 {% if books.has_next %}
                     <a href="?page={{ books.next_page_number }}">следующая</a>

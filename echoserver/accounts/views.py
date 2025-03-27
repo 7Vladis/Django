@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CustomUserCreationForm, UserProfileForm, ChangePasswordForm
 from books.models import Order
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 def register(request):
     if request.method == 'POST':
@@ -69,3 +73,22 @@ def profile_view(request):
         'password_form': password_form,
         'last_order': last_order,
     })
+
+
+@csrf_exempt
+def check_username(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username', '').strip()
+        is_taken = User.objects.filter(username=username).exists()
+        return JsonResponse({'is_taken': is_taken})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def check_email(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+        is_taken = User.objects.filter(email=email).exists()
+        return JsonResponse({'is_taken': is_taken})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

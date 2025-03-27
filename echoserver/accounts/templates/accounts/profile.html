@@ -142,7 +142,6 @@
     <div class="container">
         <h1>Личный кабинет</h1>
 
-        <!-- Сообщения об успехе или ошибке -->
         {% if messages %}
             {% for message in messages %}
                 <p class="{% if message.tags == 'success' %}success-message{% else %}error-message{% endif %}">
@@ -151,7 +150,6 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Форма редактирования профиля -->
         <h2>Редактировать данные</h2>
         <form method="post" novalidate>
             {% csrf_token %}
@@ -180,7 +178,6 @@
             <button type="submit" class="submit-button">Сохранить изменения</button>
         </form>
 
-        <!-- Форма смены пароля -->
         <h2>Сменить пароль</h2>
         <form method="post" novalidate>
             {% csrf_token %}
@@ -204,7 +201,6 @@
             <button type="submit" class="submit-button password-button">Сменить пароль</button>
         </form>
 
-        <!-- Раздел "Мои заказы" -->
         <div class="orders-section">
             <h2>Мои заказы</h2>
             {% if last_order %}

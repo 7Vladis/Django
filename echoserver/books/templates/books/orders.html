@@ -59,6 +59,21 @@
             color: #e74c3c;
             margin: 0;
         }
+        .order-actions {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .delete-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
         .back-link {
             display: block;
             text-align: center;
@@ -69,11 +84,25 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        .success-message {
+            color: #2ecc71;
+            margin-bottom: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Мои заказы</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="success-message">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
         <ul class="order-list">
             {% for order in orders %}
                 <li class="order-item">
@@ -87,12 +116,19 @@
                     <div class="total-cost">
                         <h3>Итого: {{ order.total_cost }} ₽</h3>
                     </div>
+                    <div class="order-actions">
+                        <form action="{% url 'delete_order' order.id %}?next=orders" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn">Удалить</button>
+                        </form>
+                    </div>
                 </li>
             {% empty %}
                 <li>У вас пока нет заказов.</li>
             {% endfor %}
         </ul>
         <a href="{% url 'book_list' %}" class="back-link">Вернуться в магазин</a>
+        <a href="{% url 'profile' %}" class="back-link">Вернуться в личный кабинет</a>
     </div>
 </body>
 </html>

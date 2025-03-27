@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 from .models import Books, Order, OrderItem
 from .forms import BookForm
 
@@ -137,3 +138,14 @@ def create_order(request):
 def orders_view(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'books/orders.html', {'orders': orders})
+
+
+@login_required(login_url='login')
+def delete_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    if request.method == 'POST':
+        order.delete()
+        messages.success(request, 'Заказ успешно удалён!')
+        next_url = request.GET.get('next', 'orders')
+        return redirect(next_url)
+    return redirect('orders')

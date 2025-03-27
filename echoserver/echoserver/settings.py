@@ -27,6 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Hash Password
+
+PASSWORD_HASHERS = [
+    'accounts.hashers.BCryptPasswordHasher',
+]
+
+
+STATIC_URL = '/static/'
 
 # Application definition
 
