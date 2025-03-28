@@ -42,15 +42,39 @@ def add_book(request):
 
 def book_list(request):
     books = Books.objects.all()
+
+    book_name = request.GET.get('book_name', '').strip()
+    author = request.GET.get('author', '').strip()
+    price_min = request.GET.get('price_min', '').strip()
+    price_max = request.GET.get('price_max', '').strip()
+
+    if book_name:
+        books = books.filter(book_name__icontains=book_name)
+    if author:
+        books = books.filter(author_book__icontains=author)
+    if price_min:
+        try:
+            price_min = float(price_min)
+            books = books.filter(book_price__gte=price_min)
+        except ValueError:
+            pass
+    if price_max:
+        try:
+            price_max = float(price_max)
+            books = books.filter(book_price__lte=price_max)
+        except ValueError:
+            pass
     paginator = Paginator(books, 5)
-    page = request.GET.get('page')
-    try:
-        books_page = paginator.get_page(page)
-    except PageNotAnInteger:
-        books_page = paginator.page(1)
-    except EmptyPage:
-        books_page = paginator.page(paginator.num_pages)
-    return render(request, 'books/books_list.html', {'books': books_page})
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'books/books_list.html', {
+        'books': page_obj,
+        'book_name': book_name,
+        'author': author,
+        'price_min': price_min,
+        'price_max': price_max,
+    })
 
 
 def add_to_cart(request, book_id):
